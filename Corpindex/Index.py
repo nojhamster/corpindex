@@ -38,7 +38,7 @@ class Index(object):
 		self.globalIndexDB = {} # table persistante
 		self.globalIndex = {"f":{}}
 		#self.globalIndex["f"] = {}
-		#self.indexGroupe = {} 					variable relique 
+		#self.indexGroupe = {} 					variable relique
 		#self.regexpMot = re.compile('<w ?[^>]*>[^<]*')		variable relique
 		#self.regexpAttributs = re.compile('[^= ]*="[^"]*"')	variable relique
 		self.maxMot = 0;
@@ -78,7 +78,7 @@ class Index(object):
 	# retourne le nom de l'index
 	def getName(self):
 		return self.fileName
-		
+
 	# initialisation du tokenizer
 	def initTokenizer(self,type,listeD,typeD='dico',listeMc=[],lang="df"):
 		if type == "txt":
@@ -88,7 +88,7 @@ class Index(object):
 			self.tokenizer.readMc()
 		else:
 			self.tokenizer = Tokxml()
-	
+
 	# initialisation du dossier pour la sauvegarde (effacement et création)
 	def initDB(self): 			#ancien initBase
 		"""Creates the directory where the index database is stored.
@@ -101,11 +101,11 @@ Otherwise, a "fileName_idx" directory is created."""
 				self.ficlog.write("error 1: cannot delete directory\n")
 		try:
 			os.mkdir(self.dirName)
-		except OSError: 
+		except OSError:
 			self.ficlog.write("error 2: cannot create directory\n")
 			exit(0)
-				
-	# creation des fichiers (index, document) en utilisant des tables de hachage persistantes 
+
+	# creation des fichiers (index, document) en utilisant des tables de hachage persistantes
 	# gérées par l'objet "Stock" le jeu d'étiquette est nécessaire sous forme d'un tableau
 	def createBase(self,tags):
 		self.tags = tags
@@ -123,7 +123,7 @@ Otherwise, a "fileName_idx" directory is created."""
 			self.globalIndexDB[e].open(self.dirName+'/'+self.nomRes+'.'+e,'w')
 		self.indexElement = {}
 		self.numElement = 0
-		
+
 	# retourne le type de base utilise pour stocker l'index (bsd, kcf)
 	def getNature(self):
 		nat = glob.glob(self.dirName+'/'+self.nomRes+'_index.*')
@@ -131,7 +131,7 @@ Otherwise, a "fileName_idx" directory is created."""
 			return nat[0][-3:]
 		else:
 			return ""
-		
+
 	# sauvegarde de l'indexation
 	def updateDB(self):
 		lstEtiq = {'f':1}
@@ -143,31 +143,32 @@ Otherwise, a "fileName_idx" directory is created."""
 		for e in lstEtiq:
 			#print(self.globalIndex.keys()) ##################
 			for v in self.tagIndex[e]:
-				#self.ficlog.write(str(e)+' '+str(v)+'                          '+chr(13))
-				#self.ficlog.write(str(e)+' '+str(v)+'\n')
-				#print (self.globalIndexDB[e].keys())
-				try:
-					tmpvar = self.globalIndexDB[e][v]
-					if tmpvar != None:
-						prec = pickle.loads(tmpvar)
-					else:
+				if e in self.globalIndexDB:
+					#self.ficlog.write(str(e)+' '+str(v)+'                          '+chr(13))
+					#self.ficlog.write(str(e)+' '+str(v)+'\n')
+					#print (self.globalIndexDB[e].keys())
+					try:
+						tmpvar = self.globalIndexDB[e][v]
+						if tmpvar != None:
+							prec = pickle.loads(tmpvar)
+						else:
+							prec = []
+					except (TypeError,KeyError):
+						#raise
 						prec = []
-				except (TypeError,KeyError):
-					#raise
-					prec = []
-				nouv = self.globalIndex[e][v]+prec
-				try:
-					p = pickle.dumps(nouv,2)
-				except:
-					sys.stderr.write(len(nouv))
-					raise
-				self.globalIndexDB[e][v] = p
+					nouv = self.globalIndex[e][v]+prec
+					try:
+						p = pickle.dumps(nouv,2)
+					except:
+						sys.stderr.write(len(nouv))
+						raise
+					self.globalIndexDB[e][v] = p
 			del self.globalIndex[e]
 			self.globalIndex[e] = {}
 		for e in list(self.globalIndexDB.keys()):
 			self.globalIndexDB[e].sync()
 
-		
+
 	# création de l'index
 	def indexation(self,tabTok,cptMot):
 		for tokv in tabTok:
@@ -212,7 +213,7 @@ Otherwise, a "fileName_idx" directory is created."""
 				else: # debut division
 					self.pileDiv.append([forme,cptMot+1])
 		return cptMot
-		
+
 	# indexation
 	def indexTexte(self,trans=None):
 		ptrfic = open(self.fileName,encoding='utf-8')
@@ -243,9 +244,10 @@ Otherwise, a "fileName_idx" directory is created."""
 		#print "-->"+str(self.globalIndexDB["f"].keys())
 		cptMot = self.indexation([Token(['SENT',[{'l':'SENT','c':'SENT'}]])],cptMot)
 		self.maxMot = cptMot
-		# modif ici	
+		# modif ici
 		for e in self.tagList:
-			self.tagIndex[e] = list(self.globalIndexDB[e].keys())
+			if e in self.globalIndexDB:
+				self.tagIndex[e] = list(self.globalIndexDB[e].keys())
 		self.tagIndex["f"] = list(self.globalIndexDB["f"].keys())
 		self.sauveBase()
 
@@ -281,12 +283,12 @@ Otherwise, a "fileName_idx" directory is created."""
 		#print "-->"+str(self.globalIndexDB["f"].keys())
 		cptMot = self.indexation([Token(['SENT',[{'l':'SENT','c':'SENT'}]])],cptMot)
 		self.maxMot = cptMot
-		# modif ici	
+		# modif ici
 		for e in self.tagList:
 			self.tagIndex[e] = list(self.globalIndexDB[e].keys())
 		self.tagIndex["f"] = list(self.globalIndexDB["f"].keys())
 		self.sauveBase()
-		
+
 	# transforme le texte XML en index
 	def indexTexteXml(self):
 		ptrfic = open(self.fileName,encoding='utf-8')
@@ -316,7 +318,7 @@ Otherwise, a "fileName_idx" directory is created."""
 					if av[0] == 'f':
 						tok.append(av[1])
 					else:
-						infos[av[0]] = av[1] 
+						infos[av[0]] = av[1]
 				tok.append([infos])
 				self.addTokenDocument(tok)
 				for attval in element:
@@ -326,7 +328,7 @@ Otherwise, a "fileName_idx" directory is created."""
 			self.tagIndex[e] = list(self.globalIndex[e].keys())
 		self.tagIndex["f"] = list(self.globalIndex["f"].keys())
 
-		
+
 	# creation d'un index d'un tableau de token
 	# par rapport à un index déjà créé et une table de modifications (transduction)
 	def indexTokenTrans(self,idx,trans):
@@ -346,7 +348,7 @@ Otherwise, a "fileName_idx" directory is created."""
 		for e in self.tagList:
 			self.tagIndex[e] = list(self.globalIndex[e].keys())
 		self.tagIndex["f"] = list(self.globalIndex["f"].keys())
-		
+
 	# creation d'un index d'un tableau de token
 	# par rapport à un index déjà créé
 	def indexToken(self,idx):
@@ -362,7 +364,7 @@ Otherwise, a "fileName_idx" directory is created."""
 		for e in self.tagList:
 			self.tagIndex[e] = list(self.globalIndex[e].keys())
 		self.tagIndex["f"] = list(self.globalIndex["f"].keys())
-		
+
 	# creation d'un index d'un tableau de token
 	# par rapport à un index déjà créé et un dictionnaire
 	def indexTokenDico(self,idx,dico):
@@ -390,7 +392,7 @@ Otherwise, a "fileName_idx" directory is created."""
 		for e in self.tagList:
 			self.tagIndex[e] = list(self.globalIndex[e].keys())
 		self.tagIndex["f"] = list(self.globalIndex["f"].keys())
-		
+
 	# sauvegarde de l'indexation
 	def sauveBase(self):
 		# sauvegarde des divisions
@@ -407,7 +409,7 @@ Otherwise, a "fileName_idx" directory is created."""
 		for elt in self.indexElement:
 			val = str(self.indexElement[elt])
 			self.indexPosElement[val] = elt
-	
+
 	# lecture base
 	def lectureBase(self):
 		#print(self.dirName+'/'+self.nomRes+'_index')####
@@ -444,7 +446,7 @@ Otherwise, a "fileName_idx" directory is created."""
 		self.lstDivDebSort = list(self.indexDivDebFin.keys())
 		self.lstDivDebSort.sort()
 		#print(self.lstDivDebSort)
-	
+
 	def close(self):
 		if (self.verbose):
 			sys.stderr.write("fermeture\n")
@@ -454,7 +456,7 @@ Otherwise, a "fileName_idx" directory is created."""
 		self.indexPosElement.close()
 		self.indexBD.close()
 		self.indexDiv.close()
-		
+
 	# ajoute element dans la structure ??
 	def ajouteIndex(self,etiquette,valeur,pos):
 		if etiquette not in self.globalIndex:
@@ -466,12 +468,12 @@ Otherwise, a "fileName_idx" directory is created."""
 				self.globalIndex[etiquette][valeur] = [pos]
 			else:
 				self.globalIndex[etiquette][valeur].append(pos)
-				
+
 	# retourne la liste des valeurs possible de chaque etiquette (forme comprise)
 	def getTagIndex(self,e):
 		return self.globalIndex[e]
 		#return self.globalIndexDB[e].keys()
-		
+
 	# retourne la liste des offsets par rapport a une etiquette et sa valeur
 	def getGlobalIndex(self,e,elt):
 		try: # bof
@@ -481,7 +483,7 @@ Otherwise, a "fileName_idx" directory is created."""
 			return []
 
 
-	
+
 	# retourne les divisions à la position pos
 	# sous forme d'un triplet [div,deb,fin]
 	def getDivPos(self,pos):
@@ -489,16 +491,16 @@ Otherwise, a "fileName_idx" directory is created."""
 		maxi = len(self.lstDivDebSort) - 1
 		fin = maxi
 		if fin > 0:
-			if not pos in self.lstDivDebSort:	
+			if not pos in self.lstDivDebSort:
 				deb = 0
 				m = deb
 				termine = False
 				while not termine:
-					m = (deb + fin) // 2 
+					m = (deb + fin) // 2
 					if pos > self.lstDivDebSort[m]:
-						deb = m 
+						deb = m
 					else:
-						fin = m 
+						fin = m
 					if fin - deb <= 1:
 						termine = True
 				if pos >= self.lstDivDebSort[deb] and pos <= self.lstDivDebSort[min(deb+1,maxi)]:
@@ -514,9 +516,9 @@ Otherwise, a "fileName_idx" directory is created."""
 			if len(res)>1:
 				res.pop(0)
 		return res
-	
+
 	# retourne les position de la division 'div'
-	# sous forme d'un tableau de couples debut,fin	
+	# sous forme d'un tableau de couples debut,fin
 	# NE SEMBLE PAS MARCHER
 	def getPosDiv(self,div):
 		res = []
@@ -527,9 +529,9 @@ Otherwise, a "fileName_idx" directory is created."""
 				for fin in tabDiv[debut]:
 					res.append([debut,fin])
 		return res
-		
+
 	# retourne les position de la division 'div'
-	# sous forme d'un tableau de couples debut,fin	
+	# sous forme d'un tableau de couples debut,fin
 	def getPosDivRegExp(self,rediv):
 		res = []
 		lstDiv = []
@@ -543,17 +545,17 @@ Otherwise, a "fileName_idx" directory is created."""
 						for fin in tabDiv[debut]:
 							res.append([debut,fin])
 				except:
-					pass			
+					pass
 		return res
-		
+
 	# retourn le nom du dossier contenant les indexes
 	def getIndexDirectory(self):
-		return self.dirName		
-		
+		return self.dirName
+
 	# retourne la liste possible des étiquettes
 	def getTagLists(self):
 		return pickle.loads(self.indexBD['___listetiquette___'])
-		
+
 	# enlever un élément dans l'index à un offset donné
 	def removeglobalIndex(self,e,elt,offset):
 		tabtmp = self.getGlobalIndex(e,elt)
@@ -562,13 +564,13 @@ Otherwise, a "fileName_idx" directory is created."""
 		except:
 			pass
 		self.globalIndexDB[e][elt] = pickle.dumps(tabtmp)
-	
+
 	# def intialisation fichiers documents
 	def initFicDocument(self):
 		for fic in glob.glob(self.dirName+'/'+self.nomRes+'.*'):
 			os.remove(fic)
 		self.fdocument = open(self.dirName+'/'+self.nomRes+'_document_tmp','wb')
-		
+
 	# création fichier document version 3 (current)
 	def addTokenDocument(self,tok):
 		lltok = tok.getLowStruct()
@@ -589,7 +591,7 @@ Otherwise, a "fileName_idx" directory is created."""
 		if os.path.isfile(chemin+'_document'):
 			os.remove(chemin+'_document')
 		os.rename(chemin+'_document_tmp',chemin+'_document')
-	
+
 	def closeBase(self):
 		self.indexBD.close()
 		for e in list(self.globalIndexDB.keys()):
@@ -600,7 +602,7 @@ Otherwise, a "fileName_idx" directory is created."""
 			self.divBD.close()
 		self.fdocument.close()
 		#self.documentOffset.close()
-	
+
 	# creation fichier de méta informations
 	def createMeta(self):
 		meta = open(self.dirName+'/'+self.nomRes+"_meta.xml","w",encoding='utf-8')
@@ -610,7 +612,7 @@ Otherwise, a "fileName_idx" directory is created."""
 		meta.write("\t</list>\n")
 		meta.write("</meta>\n")
 		meta.close()
-	
+
 	# retourne une information (forme ou etiquette) par rapport a son offset et le type de l'etiquette
 	def getElement(self,offset):
 		format = calcsize("i")
@@ -648,10 +650,10 @@ Otherwise, a "fileName_idx" directory is created."""
 		#print(res) ####
 		try:
 			divPos = self.getDivPos(debut)
-		except IndexError: 
+		except IndexError:
 			divPos = []
 		return [pg,res,pd,divPos]
-		
+
 	# retourne la requete dans un contexte dans un tableau associatif
 	# debut : debut
 	# fin : fin
@@ -668,15 +670,15 @@ Otherwise, a "fileName_idx" directory is created."""
 			pr.append(Token(self.getElement(i)))
 		try:
 			divPos = self.getDivPos(debut)
-		except IndexError: 
+		except IndexError:
 			divPos = [""]
 		return Concordance(pl,pv,pr,divPos,debut)
-	
+
 	# retourne le nombre de mots du document
 	def getMaxMot(self):
 		return self.maxMot
-	
-	# retourne 
+
+	# retourne
 	def getTabResultats(self,tabres,taille,nb,zone=[]):
 		"""
 	tabres : tableau de résultats
@@ -694,8 +696,8 @@ Otherwise, a "fileName_idx" directory is created."""
 				yield self.getResultat(tabres[rk],rk,taille,zone)
 #			res.append(self.getResultat(tabres[rk],rk,taille))
 #		return res
-		
-	# retourne 
+
+	# retourne
 	def getTabConc(self,tabres,taille,nb):
 		"""
 	retourne un tableau de concordances
@@ -712,7 +714,7 @@ Otherwise, a "fileName_idx" directory is created."""
 			#print(rk)####
 			if rk<self.maxMot:
 				yield self.getResultConc(tabres[rk],rk,taille)
-		
+
 	# retourne l'ensemble du document via un iterateur
 	# par paquet de 10000 (par defaut)
 	def getTokens(self,fenetre=1000):
@@ -740,7 +742,7 @@ Otherwise, a "fileName_idx" directory is created."""
 				ret = []
 				cpt = 0
 		yield ret
-		
+
 	# retourne l'ensemble du document via un iterateur
 	# par paquet de 10000 (par defaut)
 	def getIndexTokens(self):
@@ -765,4 +767,3 @@ Otherwise, a "fileName_idx" directory is created."""
 
 if __name__ == '__main__':
 	pass
-
