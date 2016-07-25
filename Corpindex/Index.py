@@ -429,8 +429,10 @@ Otherwise, a "fileName_idx" directory is created."""
 			self.globalIndexDB[e].open(self.dirName+'/'+self.nomRes+'.'+e)
 			if self.verbose:
 				self.ficlog.write("init "+e+"\n")
-			clef = open(self.dirName+'/'+self.nomRes+'.'+e+'_k','rb')
-			self.globalIndex[e] = pickle.loads(clef.read())
+			filePath = self.dirName+'/'+self.nomRes+'.'+e+'_k';
+			if os.path.isfile(filePath):
+				clef = open(filePath,'rb')
+				self.globalIndex[e] = pickle.loads(clef.read())
 		self.indexDiv = self.stock.Stock()
 		self.indexDiv.open(self.dirName+'/'+self.nomRes+'_div')
 		#print(self.dirName+'/'+self.nomRes+'_div')
