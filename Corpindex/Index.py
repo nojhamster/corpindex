@@ -73,6 +73,9 @@ class Index(object):
 			self.stock = __import__("StockDictPy")
 		elif nature == "dbm":
 			self.stock = __import__("StockDbm")
+		else:
+			self.ficlog.write("DB nature not found\n")
+			exit(1)
 		self.nature = nature
 
 	# retourne le nom de l'index

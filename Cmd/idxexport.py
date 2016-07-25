@@ -88,4 +88,3 @@ for elt in index:
 		print("</text>")
 	elif output == "json":
 		print('["FIN"]\n]')
-
