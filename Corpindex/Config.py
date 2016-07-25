@@ -8,10 +8,10 @@
 ##
 # Lecture du fichier de configuration et accesseurs
 
-try: 
+try:
 	import psyco
-	psyco.full() 
-except: 
+	psyco.full()
+except:
 	pass
 import sys
 import re
@@ -44,7 +44,7 @@ class Config(object):
 			d = parse(self.nomFic)
 		except:
 			self.ficlog.write('impossible de lire '+self.nomFic+'\n')
-			sys.exit(0)
+			sys.exit(1)
 		racine = d.childNodes[0]
 		config = {}
 		for tag in ["param","display","query","post","rules","file"]:
@@ -72,7 +72,7 @@ class Config(object):
 					self.listeDicoMc.append(i.firstChild.nodeValue)
 				else:
 					self.listeDico.append(i.firstChild.nodeValue)
-				
+
 		except:
 			self.typeDico = ""
 		# recuperation <display>
@@ -84,7 +84,7 @@ class Config(object):
 			for i in config["query"][0].getElementsByTagName("item"):
 				self.tabReq.append([i.getAttribute("id"),self.amp.sub('&',i.firstChild.nodeValue)])
 		except:
-			pass		
+			pass
 		# recuperation <file>
 		try:
 			for i in config["file"][0].getElementsByTagName("item"):
@@ -108,98 +108,98 @@ class Config(object):
 				self.tabRulesTrans.append(i.firstChild.nodeValue)
 		except:
 			pass
-							
+
 	# recuperation attribut d'un tag dans un noeud retourne un booleen
 	def getTagTagBool(self,noeud,tag,attribut,defaut):
 		try:
 			return (noeud[0].getElementsByTagName(tag)[0].getAttribute(attribut) == "True")
 		except:
 			return defaut
-		
+
 	# recuperation attribut d'un tag à partir d'un noeud retourne une valeur si elle existe ou une valeur par défaut
 	def getTagTag(self,noeud,tag,attribut,defaut):
 		try:
 			return noeud[0].getElementsByTagName(tag)[0].getAttribute(attribut)
 		except:
 			return defaut
-			
+
 	# recuperation attribut d'un noeud retourne une valeur si elle existe ou une valeur par défaut
 	def getAttTag(self,noeud,attribut,defaut):
 		try:
 			return noeud.getAttribute(attribut)
 		except:
 			return defaut
-			
+
 	# recuperation attribut d'un noeud retourne une valeur si elle existe ou une valeur par défaut
 	def getTagVal(self,noeud,defaut):
 		try:
 			return noeud.firstChild.nodeValue
 		except:
 			return defaut
-			
+
 	# accesseurs
 	def getQuery(self):
 		return self.tabReq
-	
+
 	def getFiles(self):
 		return self.tabFic
-	
+
 	def getVerbose(self):
 		return self.verb
-	
+
 	def getOutputType(self):
 		return self.t
-	
+
 	def getRange(self):
 		return self.taille
-	
+
 	def getIndex(self):
 		return self.index
-	
+
 	def getTag(self):
 		return self.tag
-	
+
 	def getBoth(self):
 		return self.both
-	
+
 	def getOutputTag(self):
-		return self.att	
-	
+		return self.att
+
 	def getOut(self):
 		return self.out
-		
+
 	def getFicout(self):
 		return self.ficout
-		
+
 	def getPost(self):
 		return self.tabPost
-		
+
 	def getTypeDico(self):
 		return self.typeDico
-		
+
 	def getListeDico(self):
 		return self.listeDico
-	
+
 	def getListeDicoMc(self):
 		return self.listeDicoMc
-		
+
 	def getLangDico(self):
 		return self.langDico
-	
+
 	def getRulesTrans(self):
 		return self.tabRulesTrans
-		
+
 	def getReplace(self):
 		return self.replace.split("|")
-		
+
 	def getVersion(self):
 		return self.version
-		
+
 	def getTypeBase(self):
 		return self.typebase
-		
+
 	def getListeEtiquettes(self):
 		return self.listetiq.split(":")
-		
+
 if __name__ == '__main__':
 	pass

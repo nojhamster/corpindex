@@ -24,21 +24,21 @@ class Stock(dict):
 			self.dico = dbm.open(name+".dbm","c")
 		except:
 			sys.stderr.write("impossible d'ouvrir : "+name+"\n")
-			exit(0)
+			exit(1)
 			#raise
 
 	def close(self):
 		self.dico.close()
-		
+
 	def keys(self):
 		return list(self.dico.keys())
 
 	def __setitem__(self,c,v):
 		self.dico[c] = v
-		
+
 	def __getitem__(self,c):
 		return self.dico[c]
-		
+
 	def sync(self):
 		pass
 

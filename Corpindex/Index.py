@@ -106,7 +106,7 @@ Otherwise, a "fileName_idx" directory is created."""
 			os.mkdir(self.dirName)
 		except OSError:
 			self.ficlog.write("error 2: cannot create directory\n")
-			exit(0)
+			exit(1)
 
 	# creation des fichiers (index, document) en utilisant des tables de hachage persistantes
 	# gérées par l'objet "Stock" le jeu d'étiquette est nécessaire sous forme d'un tableau
@@ -304,7 +304,7 @@ Otherwise, a "fileName_idx" directory is created."""
 				ligne = io.StringIO(ligne)
 			except Exception(msg):
 				self.ficlog.write("erreur lecture fichier ici :"+ligne+"\n")
-				sys.exit(0)
+				sys.exit(1)
 			nbLigne = nbLigne + 1
 			if nbLigne % 500000 == 0:
 				print("mise à jour") #####
