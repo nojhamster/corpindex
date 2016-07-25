@@ -9,7 +9,7 @@ import os
 # lecture paramètres
 parser = argparse.ArgumentParser(description="informations sur un index")
 parser.add_argument("-v", "--verbose", help="active affichage informations",action="store_true",default=False)
-parser.add_argument('-i', "--index", type=str, nargs='+',help='fichiers index')
+parser.add_argument('-i', "--index", type=str, nargs='+',help='fichiers index',required=True)
 args = parser.parse_args()
 args = vars(args)
 
@@ -41,9 +41,3 @@ except Exception as err:
 	else:
 		raise
 		print("Error !")
-
-
-
-
-
-

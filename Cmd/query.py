@@ -10,7 +10,7 @@ import os
 parser = argparse.ArgumentParser(description="interrogation d'un index")
 parser.add_argument("-v", "--verbose", help="active affichage informations",action="store_true",default=False)
 parser.add_argument("-l", "--large", help="active le mode 'grand nombre de fichiers'",action="store_true",default=False)
-parser.add_argument('-i', "--index", type=str, nargs='+',help='fichiers index')
+parser.add_argument('-i', "--index", type=str, nargs='+',help='fichiers index',required=True)
 parser.add_argument("-q", "--query", type=str, nargs='+', help="requête(s) CQPL/nom d'un fichier ",required=True)
 parser.add_argument("-o", "--output", help="type de sortie",default="txt",choices=['txt','csv','xml','txtmax',"term"])
 parser.add_argument("-r", "--range", help="taille du contexte",default=5,type=int)
@@ -36,7 +36,7 @@ output = args['output']
 if len(args["query"])==1 and os.path.isfile(args["query"][0]):
 	query = [x.rstrip() for x in open(args["query"][0])]
 else:
-	query = args['query'] 
+	query = args['query']
 large = args['large']
 feature = args["feature"]
 typepost = args["typepost"]
@@ -96,9 +96,3 @@ except Exception as err:
 	else:
 		raise
 		print("Error !")
-
-
-
-
-
-
