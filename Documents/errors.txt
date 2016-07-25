@@ -1,0 +1,2 @@
+ERROR_1	Configuration File is missing
+ERROR_2 Recent files could not be loaded

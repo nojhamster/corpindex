@@ -1,0 +1,7 @@
+type	ft_r/index	ft_r/query	taille orig	taille index
+dbm	31m55s		1m37s		116M		792M
+bsd	32m31s		1m21.859	116M		792M
+dpy 	31m10		1m24		116M		725M
+
+
+

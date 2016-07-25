@@ -1,0 +1,13 @@
+# Ajouter ici le nom de fichier ou les extensions de fichiers non désirés. Les regex fonctionnent.
+*.pyc
+*~
+*/__pycache__/*
+.output.txt
+.hist
+Gui/.sortie.txt
+*.dpy
+*.bsd
+*.dbm
+*_k
+*_tmp
+*_document
