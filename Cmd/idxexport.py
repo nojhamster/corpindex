@@ -33,7 +33,7 @@ if nosep:
 	nl = ''
 
 # path to library
-sys.path.append(os.path.dirname(sys.argv[0])+"/../Corpindex")
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../Corpindex")
 
 from Index import Index
 
